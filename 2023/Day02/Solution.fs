@@ -3,6 +3,7 @@ module advent_of_code._2023.Day02.Solution
 open System.Text.RegularExpressions
 open advent_of_code.Lib.Solver
 
+[<Problem("Problem Name", 2023, 02)>]
 type Solution() =
     
     member private this.VerifyGame (sets: string) =
@@ -33,8 +34,9 @@ type Solution() =
     
     interface Solver with
         member this.PartOne input =
-            this.Solve input
+            Some (this.Solve input)
         
         member this.PartTwo input =
-            Some (this.Solve input)
+            None
+            // Some (this.Solve input)
             

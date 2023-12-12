@@ -12,8 +12,13 @@
         <Content Include="2023\Day01\input" />
         <Compile Include="2023\Day02\Solution.fs" />
         <Content Include="2023\Day02\input" />
-        <Compile Include="Program.fs"/>
+        <Compile Include="_Program.fs" />
+        <Compile Include="Program.fs" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console" Version="0.48.1-preview.0.5" />
+    </ItemGroup>
 
 </Project>

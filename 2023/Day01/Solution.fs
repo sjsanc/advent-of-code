@@ -3,12 +3,6 @@ module advent_of_code._2023.Day01.Solution
 open System
 open System.Text.RegularExpressions
 open advent_of_code.Lib.Solver
-
-type ProblemAttribute(name: string, year: int, day: int) =
-    inherit Attribute()
-    member this.Name = name
-    member this.Year = year
-    member this.Day = day
     
 
 [<Problem("Problem Name", 2023, 01)>]
@@ -45,7 +39,7 @@ type Solution() =
           
     interface Solver with
         member this.PartOne input =
-            this.Solve input @"(\d)"
+            Some (this.Solve input @"(\d)")
         
         member this.PartTwo input =
             Some (this.Solve input @"(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
