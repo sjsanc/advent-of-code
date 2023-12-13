@@ -1,6 +1,5 @@
 module advent_of_code._2023.Day01.Solution
 
-open System
 open System.Text.RegularExpressions
 open advent_of_code.Lib.Solver
     

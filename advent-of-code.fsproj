@@ -12,7 +12,8 @@
         <Content Include="2023\Day01\input" />
         <Compile Include="2023\Day02\Solution.fs" />
         <Content Include="2023\Day02\input" />
-        <Compile Include="_Program.fs" />
+        <Compile Include="2023\Day03\Solution.fs" />
+        <Content Include="2023\Day03\input" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
