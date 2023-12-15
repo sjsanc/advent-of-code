@@ -19,34 +19,33 @@ type Solution() =
                 |> (fun i -> acc + i)
              ) 0
              |> string
-             
-             
-        member private this.GetWinnings (line: seq<Match>) =
-            line
-            |> Seq.fold (fun acc m ->
-                let w = m.Groups.[1].Value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-                let n = m.Groups.[2].Value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
-                (Array.filter (fun x -> Array.exists (fun y -> x = y) w) n).Length                       
-            ) 0
-             
+        
         member private this.SolveTwo (input: string array) =
-            input
-             |> Array.fold (fun acc line ->
-                Regex.Matches(line, ":\s*([^|]+)\s*\|\s*(\d+.*)$")
-                |> Seq.cast<Match>
-                |> this.GetWinnings
-                |> (fun i -> acc + i)
-             ) 0
-             |> string
+            let rec processLine (lines: string array) (acc: int list) (idx: int) =
+                let mult = acc[idx]
+
+                let line = lines[idx]
+                let m = Regex.Matches(line, ":\s*([^|]+)\s*\|\s*(\d+.*)$") 
+                let w = m[0].Groups.[1].Value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+                let n = m[0].Groups.[2].Value.Split([|' '|], System.StringSplitOptions.RemoveEmptyEntries)
+                let len = (Array.filter (fun x -> Array.exists (fun y -> x = y) w) n).Length
+               
+                let newAcc = List.mapi (fun i x -> if i > idx && i < idx + 1 + len then x + mult else x) acc
+                
+                if idx = lines.Length - 1 then acc
+                else processLine input newAcc (idx + 1)
+            
+            let initial = [for _ in 0 .. input.Length - 1 -> 1] 
+            let result = processLine input initial 0 |> List.sum
+            
+            string result
+            
+             
              
         interface Solver with
             member this.PartOne input =
                 Some (this.SolveOne input)
             
-            // For each line, calculate winnings as the length of the intersecting numbers
-            
             member this.PartTwo input =
                 Some (this.SolveTwo input)
-    
-        
-
+ 
