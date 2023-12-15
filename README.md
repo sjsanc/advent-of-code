@@ -1,4 +1,4 @@
-Solutions to Advent of Code implemented in F#
+# 🎄 Solutions to Advent of Code implemented in F#
 
 Structural inspiration from https://github.com/encse/adventofcode
 
