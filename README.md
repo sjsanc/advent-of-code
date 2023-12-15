@@ -1,5 +1,7 @@
 🎄 **Solutions to Advent of Code implemented in F#**
 
+https://adventofcode.com/
+
 Structural inspiration from https://github.com/encse/adventofcode
 
 Run a solution with 
