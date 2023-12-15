@@ -55,8 +55,6 @@ type Solution() =
         |> Array.concat
         |> Array.sum
         |> string
-       
-    
     
     interface Solver with
         member this.PartOne input =
