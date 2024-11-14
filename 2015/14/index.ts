@@ -1,65 +1,54 @@
 import Solution from "../solution";
 
+// https://github.com/NiXXeD/adventofcode/blob/master/2015/day14/part2.js
+// Ultimately, I had an off by one error that made me reach for this.
+// Still unsure why the cycle method from the previous commit didn't work.
+
+type Reindeer = {
+    speed: number;
+    flyTime: number;
+    restTime: number;
+    distance: number;
+    points: number;
+    isResting: boolean;
+    remaining: number;
+};
+
 class Day14 extends Solution {
     constructor() {
         super("14")
     }
 
-    parse(line: string): [...number[]] {
-        return line.split(" ").flatMap(e => parseInt(e) ? parseInt(e) : [])
+    parse(line: string): Reindeer {
+        const [speed, flyTime, restTime] = line.match(/(\d+)/g)!.map(Number)
+        return {speed, flyTime, restTime, isResting: false, remaining: flyTime, distance: 0, points: 0}
     }
 
-    race(duration: number) {
-        const distance = this.lines.map(this.parse).reduce((acc: number[], [speed, fly, rest]) => {
-            const cycles = Math.floor(duration / (rest + fly))
-            const remaining = Math.min(duration % (rest + fly), fly)
+    race(duration: number, scoreBy: "points" | "distance") {
+        const reindeers = [...this.lines].map(line => this.parse(line));
 
-            return [...acc, (cycles * fly + remaining) * speed]
-        }, [])
+        for (let i = 1; i < duration; i++) {
+            reindeers.forEach(r => {
+                if (!r.isResting) r.distance += r.speed;
+                if (!--r.remaining) {
+                    r.isResting = !r.isResting;
+                    r.remaining = r.isResting ? r.restTime : r.flyTime;
+                }
+            })
 
-        console.log(distance)
+            const maxDistance = Math.max(...reindeers.map(r => r.distance));
+            reindeers.filter(r => r.distance === maxDistance).forEach(r => r.points++);
+        }
 
-        return 0
+        return Math.max(...reindeers.map(r => r[scoreBy]));
     }
     
     partOne() {
-        return this.race(2503)
+        return this.race(2503, "distance")
     }
 
     partTwo() {
-        // const reindeers = this.lines.map(this.parse)
-        // const distance = Array(reindeers.length).fill(0)
-
-        // for (let i = 1; i <= 2503; i++) {
-        //     reindeers.forEach(([speed, fly, rest], reindeer) => {
-        //         if (i % (fly + rest) <= fly) {
-        //             distance[reindeer] += speed
-        //         }
-        //     })
-        // }
-
-        // console.log(distance)
-
-        // return 0
-
-        return [...Array(2503)].reduce(r => {
-            r.forEach((e: any) => {
-                if (!e.rest) e.distance += e.speed
-                if (!--e.remaining) {
-                    e.rest = !e.rest
-                    e.remaining = e.rest ? e.restTime : e.flyTime
-                }
-            })
-            var max = r.reduce((r: any, v: any) => r > v.distance ? r : v.distance, 0)
-            r.filter((e: any) => e.distance == max).forEach((e: any) => e.points++)
-            return r
-        }, [...this.lines].map((s: any) => s.match(/(\d+)/g)).map((m: any) => ({
-            speed: +m[0], flyTime: +m[1], restTime: +m[2], distance: 0, remaining: +m[1], points: 0
-        }))).reduce((r: any, v: any) => r > v.points ? r : v.points, 0)
-
-
-        // RECONCILE THESE TWO BEFORE CONTINUING
-        // https://github.com/NiXXeD/adventofcode/blob/master/2015/day14/part2.js
+        return this.race(2503, "points")
     }
 }
 
