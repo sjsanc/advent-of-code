@@ -4,7 +4,7 @@ https://adventofcode.com/
 
 | Year | Language | Stars |
 |------|----------|-------|
-|2015|TypeScript|28/52|
+|2015|TypeScript|41/52|
 |2016|C++|0/52|
 |2017|??|0/52|
 |2018|??|0/52|
