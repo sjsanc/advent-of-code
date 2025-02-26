@@ -4,6 +4,7 @@ import (
 	Day01 "aoc2024/01"
 	Day02 "aoc2024/02"
 	Day03 "aoc2024/03"
+	Day04 "aoc2024/04"
 	"flag"
 )
 
@@ -20,5 +21,7 @@ func main() {
 		Day02.Solve()
 	case 3:
 		Day03.Solve()
+	case 4:
+		Day04.Solve()
 	}
 }
