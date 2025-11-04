@@ -64,7 +64,7 @@ interface Strategy {
 
 const strategies = (): Strategy[] => {
     const perms: Strategy[] = []
-
+    
     // Iterate through each spell.
     // For each Strategy, keep adding spells within the permutation, factoring in Effect times, until a total Damage is met. 
     // [MM] - [MM]

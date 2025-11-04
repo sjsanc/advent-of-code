@@ -1,15 +1,11 @@
 import fs from "fs";
 import path from 'path';
 
-type PartFunction = undefined | ((input: string) => number | string);
-
 export default class Solution {
     public day: string = "01";
     public input: string = "";
     public lines: string[] = [];
     public chars: string[] = [];
-    public partOneFn: PartFunction = undefined;
-    public partTwoFn: PartFunction = undefined;
 
     constructor(day: string) {
         this.day = day;
@@ -23,22 +19,18 @@ export default class Solution {
     }
 
     partOne(): number | string | undefined {
-        return this.partOneFn?.(this.input);
+        return undefined;
     }
 
     partTwo(): number | string | undefined {
-        return this.partTwoFn?.(this.input);
+        return undefined;
     }
 
-    async solve(part: string): Promise<[number | undefined | string, number | undefined | string]> {
-        console.log(`Solving Day ${this.day}...`)
-        
+    async solve(): Promise<[number | undefined | string, number | undefined | string]> {
         this.loadInput();
-        
-        const part1Result = part == "1" || !part ? this.partOne() : undefined;
-        const part2Result = part == "2" || !part ? this.partTwo() : undefined;
-        
-        console.log(`${part1Result}\n${part2Result}\n`)
+
+        const part1Result = this.partOne();
+        const part2Result = this.partTwo();
 
         return [part1Result, part2Result];
     }

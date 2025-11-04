@@ -1,46 +1,108 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"os"
-	"os/exec"
+	"sort"
+	"sync"
+	"time"
 )
 
-// Test runner should expose a CLI for running each year, day and part
-// e.g.
-// - go run main.go 2021 1 1	(run day 1 part 1)
-// - go run main.go 2021 		(run all days)
-// - go run main.go 			(run all years and days)
-
-// The test runner should time the execution of each part
-// The test runner should be able to excute each year, day and part in parallel
-
 func main() {
-	var year, day, part string
-	flag.StringVar(&year, "year", "", "Year (e.g., 2021)")
-	flag.StringVar(&day, "day", "", "Day (e.g., 1)")
-	flag.StringVar(&part, "part", "", "Part (e.g., 1)")
+	args := os.Args[1:]
 
-	flag.Parse()
-
-	dirs, err := os.ReadDir("../")
-	if err != nil {
-		panic(err)
+	var yearFilter, dayFilter string
+	if len(args) > 0 {
+		yearFilter = args[0]
+	}
+	if len(args) > 1 {
+		dayFilter = args[1]
 	}
 
-	// fmt.Println(year, day, part)
+	harnesses := getHarnesses()
 
-	for _, dir := range dirs {
-		fmt.Println(dir.Name())
+	years := make([]string, 0, len(harnesses))
+	for year := range harnesses {
+		years = append(years, year)
+	}
+	sort.Strings(years)
 
-		if dir.Name() == "2015" {
-			cmd := exec.Command("npm", "run", "solve", "--", day)
-			stdout, err := cmd.Output()
-			if err != nil {
-				panic(err)
-			}
-			fmt.Println(string(stdout))
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	yearResults := make([]YearResult, 0)
+
+	for _, year := range years {
+		if yearFilter != "" && year != yearFilter {
+			continue
 		}
+
+		wg.Add(1)
+		go func(y string) {
+			defer wg.Done()
+
+			harness := harnesses[y]
+			days := harness.DiscoverDays()
+
+			if len(days) == 0 {
+				return
+			}
+
+			filteredDays := make([]string, 0)
+			for _, day := range days {
+				if dayFilter != "" && normalizeDayPadded(dayFilter) != day {
+					continue
+				}
+				filteredDays = append(filteredDays, day)
+			}
+
+			if len(filteredDays) == 0 {
+				return
+			}
+
+			var dayWg sync.WaitGroup
+			var dayMu sync.Mutex
+			dayResults := make([]DayResult, 0, len(filteredDays))
+			startTime := time.Now()
+
+			for _, day := range filteredDays {
+				dayWg.Add(1)
+				go func(d string) {
+					defer dayWg.Done()
+
+					part1, part2, duration, err := harness.RunDay(d)
+
+					dayMu.Lock()
+					dayResults = append(dayResults, DayResult{
+						day:      d,
+						part1:    part1,
+						part2:    part2,
+						duration: duration,
+						err:      err,
+					})
+					dayMu.Unlock()
+				}(day)
+			}
+
+			dayWg.Wait()
+			totalTime := time.Since(startTime)
+
+			mu.Lock()
+			yearResults = append(yearResults, YearResult{
+				year:     y,
+				language: harness.Language(),
+				days:     dayResults,
+				total:    totalTime,
+			})
+			mu.Unlock()
+		}(year)
+	}
+
+	wg.Wait()
+
+	sort.Slice(yearResults, func(i, j int) bool {
+		return yearResults[i].year < yearResults[j].year
+	})
+
+	for _, result := range yearResults {
+		renderTable(result)
 	}
 }

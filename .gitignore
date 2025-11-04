@@ -4,3 +4,6 @@ output.txt
 
 build/
 .vscode/
+.claude/
+CLAUDE.md
+advent-of-code
