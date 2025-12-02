@@ -58,6 +58,8 @@ func main() {
 				return
 			}
 
+			liveTable := NewLiveTable(y, harness.Language(), filteredDays)
+
 			var dayWg sync.WaitGroup
 			var dayMu sync.Mutex
 			dayResults := make([]DayResult, 0, len(filteredDays))
@@ -70,20 +72,26 @@ func main() {
 
 					part1, part2, duration, err := harness.RunDay(d)
 
-					dayMu.Lock()
-					dayResults = append(dayResults, DayResult{
+					result := DayResult{
 						day:      d,
 						part1:    part1,
 						part2:    part2,
 						duration: duration,
 						err:      err,
-					})
+					}
+
+					liveTable.UpdateDay(d, result)
+
+					dayMu.Lock()
+					dayResults = append(dayResults, result)
 					dayMu.Unlock()
 				}(day)
 			}
 
 			dayWg.Wait()
 			totalTime := time.Since(startTime)
+
+			liveTable.Finalize(totalTime)
 
 			mu.Lock()
 			yearResults = append(yearResults, YearResult{
@@ -97,12 +105,4 @@ func main() {
 	}
 
 	wg.Wait()
-
-	sort.Slice(yearResults, func(i, j int) bool {
-		return yearResults[i].year < yearResults[j].year
-	})
-
-	for _, result := range yearResults {
-		renderTable(result)
-	}
 }

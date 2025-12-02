@@ -49,12 +49,14 @@ class Day16 extends Solution {
     }
 
     partTwo() {
-        return this.parse().findIndex(sue => 
+        return this.parse().findIndex(sue =>
             Object.entries(sue).every(([key, value]) => {
                 switch (key) {
-                    case "cats" || "trees":
+                    case "cats":
+                    case "trees":
                         return value > this.data[key];
-                    case "pomeranian" || "goldfish":
+                    case "pomeranians":
+                    case "goldfish":
                         return value < this.data[key];
                     default:
                         return value === this.data[key];

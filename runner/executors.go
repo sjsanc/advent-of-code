@@ -26,12 +26,18 @@ func executeTypeScript(yearDir, day string) (string, string, time.Duration, erro
 		return "", "", duration, fmt.Errorf("failed to read results: %w", err)
 	}
 
-	lines := strings.Split(strings.TrimSpace(string(content)), "\n")
-	if len(lines) < 2 {
-		return "", "", duration, fmt.Errorf("invalid results file")
+	lines := strings.Split(string(content), "\n")
+	part1 := ""
+	part2 := ""
+
+	if len(lines) > 0 {
+		part1 = strings.TrimSpace(lines[0])
+	}
+	if len(lines) > 1 {
+		part2 = strings.TrimSpace(lines[1])
 	}
 
-	return strings.TrimSpace(lines[0]), strings.TrimSpace(lines[1]), duration, nil
+	return part1, part2, duration, nil
 }
 
 func executeCpp(yearDir, day string) (string, string, time.Duration, error) {

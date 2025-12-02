@@ -117,3 +117,5 @@ class Day22 extends Solution {
         return ""
     }
 }
+
+export default new Day22()

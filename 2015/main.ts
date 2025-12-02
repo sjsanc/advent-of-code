@@ -22,7 +22,9 @@ async function run() {
         const [p1, p2] = await solver.solve();
 
         const resultFilePath = path.resolve(__dirname, day, 'results.txt');
-        writeFileSync(resultFilePath, `${p1}\n${p2}`, { flag: 'w' });
+        const part1Result = p1 === undefined ? '' : p1;
+        const part2Result = p2 === undefined ? '' : p2;
+        writeFileSync(resultFilePath, `${part1Result}\n${part2Result}`, { flag: 'w' });
     } catch (error) {
         console.error(`Error loading solution for ${day}`, error)
         process.exit(1)
