@@ -1,12 +1,45 @@
 #!/bin/bash
 
-# Day must be provided
-if [ $# -ne 1 ]; then
-    echo "Usage: $0 <day>"
-    exit 1
+# Build the project using CMake
+build_project() {
+    echo "Building Advent of Code 2016..."
+    mkdir -p build
+    cd build
+
+    # Configure with CMake if needed
+    if [ ! -f "Makefile" ]; then
+        cmake .. > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            echo "CMake configuration failed"
+            cd ..
+            exit 1
+        fi
+    fi
+
+    # Build
+    make 2>&1 | grep -E "error:|warning:|Built target"
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        echo "Build failed"
+        cd ..
+        exit 1
+    fi
+
+    cd ..
+}
+
+# Check if executable exists, build if not
+if [ ! -f "build/advent-of-code" ]; then
+    build_project
 fi
 
-# Ensure day is formatted with leading 0
+# If no arguments, run all days
+if [ $# -eq 0 ]; then
+    echo "Running all implemented days..."
+    ./build/advent-of-code
+    exit 0
+fi
+
+# If argument provided, validate and run specific day
 day=$(printf "%02d" $1)
 
 # Ensure day exists
@@ -15,22 +48,8 @@ if [ ! -d "$day" ]; then
     exit 1
 fi
 
-# Ensure main.cpp exists
-if [ ! -f "$day/main.cpp" ]; then
-    echo "main.cpp does not exist for day $day"
-    exit 1
-fi
+# Rebuild to ensure latest changes
+build_project
 
-# Create build directory
-mkdir -p build
-
-output_path="build/$day"
-
-g++ -std=c++11 -o $output_path $day/main.cpp
-if [ $? -ne 0 ]; then
-    echo "Compilation failed for $day"
-    exit 1
-fi
-
-echo "Running Day $day"
-$output_path
+echo "Running Day $day..."
+./build/advent-of-code $1
