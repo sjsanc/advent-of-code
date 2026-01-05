@@ -1,1 +1,0 @@
-/home/sjsanc/work/advent-of-code/2018/target/debug/aoc2018: /home/sjsanc/work/advent-of-code/2018/src/day01/mod.rs /home/sjsanc/work/advent-of-code/2018/src/main.rs /home/sjsanc/work/advent-of-code/2018/src/solution.rs
