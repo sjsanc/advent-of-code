@@ -3,10 +3,7 @@ const solution = @import("../solution.zig");
 
 pub fn solve(allocator: std.mem.Allocator) !void {
     var s = try solution.Solution.init(allocator, 1);
-    defer allocator.free(s.input);
-
-    const lines = try s.lines();
-    defer allocator.free(lines);
+    defer s.deinit();
 
     const part1 = try solvePart1(s.input);
     const part2 = try solvePart2(s.input);

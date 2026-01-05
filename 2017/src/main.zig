@@ -1,5 +1,6 @@
 const std = @import("std");
 const day01 = @import("01/day.zig");
+const day02 = @import("02/day.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -18,6 +19,7 @@ pub fn main() !void {
 
     switch (day) {
         1 => try day01.solve(allocator),
+        2 => try day02.solve(allocator),
         else => {
             std.debug.print("Day {d} not implemented\n", .{day});
         },
